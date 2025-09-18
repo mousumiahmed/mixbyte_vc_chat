@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Video Meeting Room</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2 align="center">Video Meeting Room</h2>
+  <div id="container">
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+  </div>
+
+  <div id="share-links">
+    <input type="text" id="meetingURL" readonly>
+    <br><br>
+    <a id="whatsappLink" target="_blank">Send via WhatsApp</a> |
+    <a id="mailLink" target="_blank">Send via Email</a>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
