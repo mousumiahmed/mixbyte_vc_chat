@@ -1,5 +1,8 @@
 const socket = io();
-const room = window.location.pathname.split('/').pop();
+// const room = window.location.pathname.split('/').pop();
+const room = Math.random().toString(36).substr(2, 9);
+
+console.log(room)
 
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
