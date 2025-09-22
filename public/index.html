@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2 align="center">Video Meeting Room</h2>
+  <h2 style="justify-content: center;">Video Meeting Room</h2>
   <div id="container">
     <video id="localVideo" autoplay muted></video>
     <video id="remoteVideo" autoplay></video>
@@ -19,7 +19,12 @@
     <a id="mailLink" target="_blank">Send via Email</a>
   </div>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="script.js"></script>
+ <!-- <input type="text" id="username" placeholder="Enter your name" />
+  <input type="text" id="room" placeholder="Enter room ID" /> -->
+<button id="joinBtn">Join Meeting</button>
+<!-- Add this in your HTML/EJS file -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>

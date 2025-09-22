@@ -1,42 +1,51 @@
-// server.js
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
+const express = require("express");
 const app = express();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 
-const server = http.createServer(app);
-const io = new Server(server);
+app.set("view engine", "ejs");
+app.set("views", __dirname + "/views");
+app.use(express.static("public"));
 
-app.use(express.static('public'));
+const rooms = {}; // track participants per room
 
-app.get('/:room', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+// Dashboard route
+app.get('/:roomId', (req, res) => {
+  const roomId = req.params.roomId;
+  // render a page or send data for that room
+  res.render('room', { roomId });
 });
 
-io.on('connection', socket => {
-  socket.on('join', room => {
+
+// Socket.io
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("join", (room) => {
     socket.join(room);
-    socket.to(room).emit('user-connected', socket.id);
+    if (!rooms[room]) rooms[room] = [];
+    rooms[room].push(socket.id);
 
-    socket.on('offer', (data) => {
-      socket.to(room).emit('offer', data);
+    // Notify other participants
+    socket.to(room).emit("user-connected", socket.id);
+
+    socket.on("offer", ({ offer, to }) => {
+      socket.to(to).emit("offer", { offer, from: socket.id });
     });
 
-    socket.on('answer', (data) => {
-      socket.to(room).emit('answer', data);
+    socket.on("answer", ({ answer, to }) => {
+      socket.to(to).emit("answer", { answer, from: socket.id });
     });
 
-    socket.on('candidate', (data) => {
-      socket.to(room).emit('candidate', data);
+    socket.on("candidate", ({ candidate, to }) => {
+      socket.to(to).emit("candidate", { candidate, from: socket.id });
     });
 
-    socket.on('disconnect', () => {
-      socket.to(room).emit('user-disconnected', socket.id);
+    socket.on("disconnect", () => {
+      rooms[room] = rooms[room].filter(id => id !== socket.id);
+      socket.to(room).emit("user-disconnected", socket.id);
     });
   });
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+http.listen(3000, () => console.log("Server running at http://localhost:3000"));
